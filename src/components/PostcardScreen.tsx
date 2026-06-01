@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-const RESEND_API = "https://api.resend.com/emails";
+const RESEND_API = "/api/resend/emails";
+const RESEND_KEY = "re_D7E8sLh9_BcjzWJFfneC7gGHPRwwP7JVz";
 const NOTIFICATION_EMAIL = "anatola@anatolaaraba.com";
 
 interface PostcardScreenProps {
@@ -59,22 +60,10 @@ const PostcardScreen = ({
     if (!email.trim() || !message.trim() || sending) return;
     setSending(true);
 
-    const apiKey = import.meta.env.VITE_RESEND_API_KEY;
+    const apiKey = RESEND_KEY;
 
-    // Fetch world image and convert to base64 for inline embedding
-    let imageBase64 = "";
-    try {
-      const imgRes = await fetch(civilizationImage);
-      const blob = await imgRes.blob();
-      imageBase64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
-        reader.readAsDataURL(blob);
-      });
-    } catch (_) {}
-
-    const imageTag = imageBase64
-      ? `<img src="cid:world_image" alt="${civilizationName}" style="width:100%;border-radius:12px;margin-bottom:0;display:block;" />`
+    const imageTag = civilizationImage
+      ? `<img src="${civilizationImage}" alt="${civilizationName}" style="width:100%;border-radius:12px;margin-bottom:0;display:block;" />`
       : "";
 
     const emailHtml = `
@@ -130,19 +119,10 @@ const PostcardScreen = ({
 
     const payload: Record<string, unknown> = {
       from: "R3imagine Story Lab <onboarding@resend.dev>",
-      to: [email.trim()],
-      bcc: [NOTIFICATION_EMAIL],
-      subject: `Your postcard from the future — ${civilizationName}`,
+      to: [NOTIFICATION_EMAIL],
+      subject: `[${email.trim()}] Postcard from ${civilizationName}`,
       html: emailHtml,
     };
-
-    if (imageBase64) {
-      payload.attachments = [{
-        filename: `${civilizationName.replace(/\s+/g, "-")}.png`,
-        content: imageBase64,
-        content_id: "world_image",
-      }];
-    }
 
     try {
       await fetch(RESEND_API, {
