@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-const RESEND_API = "/api/resend/emails";
+const RESEND_API = "https://api.resend.com/emails";
 const NOTIFICATION_EMAIL = "anatola@anatolaaraba.com";
 
 interface PostcardScreenProps {
