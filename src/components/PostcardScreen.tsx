@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-const RESEND_API = "/api/resend/emails";
+const RESEND_API = import.meta.env.DEV
+  ? "/api/resend/emails"
+  : "https://corsproxy.io/?url=https://api.resend.com/emails";
 const RESEND_KEY = "re_D7E8sLh9_BcjzWJFfneC7gGHPRwwP7JVz";
 const NOTIFICATION_EMAIL = "anatola@anatolaaraba.com";
 
